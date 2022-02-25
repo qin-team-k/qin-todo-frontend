@@ -6,12 +6,15 @@ import {
   useDroppable,
   useSensors,
   useSensor,
+  MouseSensor,
+  KeyboardSensor,
 } from "@dnd-kit/core";
 import {
   SortableContext,
   arrayMove,
   verticalListSortingStrategy,
   SortingStrategy,
+  sortableKeyboardCoordinates,
 } from "@dnd-kit/sortable";
 import { PlusCircleIcon } from "@heroicons/react/solid";
 import axios from "axios";
@@ -80,6 +83,7 @@ const Home = () => {
 
   const [isAdding, setIsAdding] = useState(false);
   const [items, setItems] = useState<Items>();
+  const [content, setContent] = useState();
 
   useEffect(() => {
     if (data) {
@@ -91,7 +95,13 @@ const Home = () => {
 
   const [clonedItems, setClonedItems] = useState<Items | null>(null);
   const [_activeId, setActiveId] = useState<string | null>(null);
-  const sensors = useSensors(useSensor(PointerSensor));
+
+  const sensors = useSensors(
+    useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   const findContainer = (id: string) => {
     let container;
@@ -119,6 +129,17 @@ const Home = () => {
     mode: "onSubmit",
     reValidateMode: "onChange",
   });
+
+  const handleEnter = async (e, status: string) => {
+    if (e.target.value === "") return;
+    if (e.key === "Enter") {
+      await axios.post("http://localhost:3000/v1/todos", {
+        content: e.target.value,
+        status: status,
+      });
+      mutate("http://localhost:3000/v1/todos");
+    }
+  };
 
   const handleOnSubmit: SubmitHandler<Payload> = async (data) => {
     console.log(data);
@@ -257,7 +278,13 @@ const Home = () => {
                     <SortableItem key={todo.id} todo={todo} />
                   ))}
                   <div>
-                    {isAdding ? (
+                    <input
+                      type="text"
+                      placeholder="タスクを追加する"
+                      className="bg-gray-200"
+                      onKeyPress={(e) => handleEnter(e, key)}
+                    />
+                    {/* {isAdding ? (
                       <form onSubmit={handleSubmit(handleOnSubmit)}>
                         <div className="flex items-center pl-1 space-x-1">
                           <input className="focus:outline-none" type="radio" />
@@ -267,6 +294,11 @@ const Home = () => {
                             placeholder="タスクを追加する"
                             {...register("content")}
                             autoFocus
+                          />
+                          <input
+                            type="text"
+                            {...register("status")}
+                            value={key}
                           />
                         </div>
                       </form>
@@ -279,8 +311,9 @@ const Home = () => {
                         >
                           タスクを追加する
                         </button>
+                        <p>{key}</p>
                       </div>
-                    )}
+                    )} */}
                   </div>
                 </DroppableContainer>
               </SortableContext>

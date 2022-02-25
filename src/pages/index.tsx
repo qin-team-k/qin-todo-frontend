@@ -22,14 +22,15 @@ import { SortableItem } from "@/components/SortableItem";
 import { Todo } from "@/types";
 
 type Items = Record<string, Todo[]>;
-type Props = {
-  collisionDetection?: CollisionDetection;
-  strategy?: SortingStrategy;
-};
 
 type Payload = {
   content: string;
   status: string;
+};
+
+type DroppableContainerProps = {
+  children: React.ReactNode;
+  id: string;
 };
 
 function insert<T>(arr: T[], index: number, elem: T) {
@@ -38,14 +39,7 @@ function insert<T>(arr: T[], index: number, elem: T) {
   return copy;
 }
 
-const DroppableContainer = ({
-  children,
-  id,
-}: {
-  children: React.ReactNode;
-  id: string;
-  items: string[];
-}) => {
+const DroppableContainer = ({ children, id }: DroppableContainerProps) => {
   const { setNodeRef } = useDroppable({ id });
 
   return (
@@ -55,10 +49,7 @@ const DroppableContainer = ({
   );
 };
 
-const Home = ({
-  collisionDetection = closestCorners,
-  strategy = verticalListSortingStrategy,
-}: Props) => {
+const Home = () => {
   const getContainerName = (key: string): string => {
     switch (key) {
       case "TODAY":
@@ -148,7 +139,7 @@ const Home = ({
       {items && (
         <DndContext
           sensors={sensors}
-          collisionDetection={collisionDetection}
+          collisionDetection={closestCorners}
           onDragStart={({ active }) => {
             setActiveId(active.id);
             setClonedItems(items);
@@ -253,11 +244,12 @@ const Home = ({
         >
           <div className="inline-grid grid-cols-3 gap-12 items-start w-[800px] h-screen">
             {Object.entries(items).map(([key, values]) => (
-              <SortableContext key={key} items={values} strategy={strategy}>
-                <DroppableContainer
-                  id={key}
-                  items={values.map((value) => value.id)}
-                >
+              <SortableContext
+                key={key}
+                items={values}
+                strategy={verticalListSortingStrategy}
+              >
+                <DroppableContainer id={key}>
                   <h1 className="py-4 text-xl font-bold">
                     {getContainerName(key)}
                   </h1>

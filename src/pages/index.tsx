@@ -4,6 +4,8 @@ import { Todos } from "@/components/Todos";
 
 const Home: NextPage = () => {
   const { data, error } = useSWR(`http://localhost:3000/v1/todos`);
+  const todayTodo = data?.filter((todo) => todo.status == "TODAY");
+  console.log(todayTodo);
 
   if (!data) return <div>Loading</div>;
 

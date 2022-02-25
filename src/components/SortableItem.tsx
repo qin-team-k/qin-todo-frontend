@@ -47,7 +47,7 @@ export const SortableItem: FC<Props> = ({ todo }) => {
             onChange={() => handleToggle(todo.id)}
           />
           <label className={`${todo.done ? "line-through" : null} opacity-50`}>
-            {todo.content}
+            {`${todo.id}:${todo.content}`}
           </label>
         </div>
         <div className="flex">

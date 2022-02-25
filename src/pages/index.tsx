@@ -55,7 +55,7 @@ const DroppableContainer = ({
   );
 };
 
-const Broadcasting = ({
+const Home = ({
   collisionDetection = closestCorners,
   strategy = verticalListSortingStrategy,
 }: Props) => {
@@ -72,23 +72,31 @@ const Broadcasting = ({
     }
   };
 
-  const { data, error } = useSWR<Todo[]>(`http://localhost:3000/v1/todos`);
-  const todayTodo = data?.filter((todo) => todo.status === "TODAY");
-  const tomorrowTodo = data?.filter((todo) => todo.status === "TOMORROW");
-  const nextTodo = data?.filter((todo) => todo.status === "NEXT");
+  const { data, error } = useSWR<Items>(`http://localhost:3000/v1/todos`);
+  // const todayTodo = data?.filter((todo) => todo.status === "TODAY");
+  // const tomorrowTodo = data?.filter((todo) => todo.status === "TOMORROW");
+  // const nextTodo = data?.filter((todo) => todo.status === "NEXT");
+
+  // useEffect(() => {
+  //   if (todayTodo && tomorrowTodo && nextTodo) {
+  //     setItems({
+  //       TODAY: todayTodo,
+  //       TOMORROW: tomorrowTodo,
+  //       NEXT: nextTodo,
+  //     });
+  //   }
+  // }, [data]);
 
   const [isAdding, setIsAdding] = useState(false);
   const [items, setItems] = useState<Items>();
 
   useEffect(() => {
-    if (todayTodo && tomorrowTodo && nextTodo) {
-      setItems({
-        TODAY: todayTodo,
-        TOMORROW: tomorrowTodo,
-        NEXT: nextTodo,
-      });
+    if (data) {
+      setItems(data);
     }
   }, [data]);
+
+  console.log(items);
 
   const [clonedItems, setClonedItems] = useState<Items | null>(null);
   const [_activeId, setActiveId] = useState<string | null>(null);
@@ -292,4 +300,4 @@ const Broadcasting = ({
   );
 };
 
-export default Broadcasting;
+export default Home;

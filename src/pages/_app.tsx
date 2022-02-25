@@ -1,7 +1,7 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import { SWRConfig } from "swr";
-import { fetcher } from "../fetch/fetcher";
+import { fetcher } from "@/lib/fetcher";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (

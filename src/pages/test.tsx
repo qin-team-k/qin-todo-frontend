@@ -1,70 +1,31 @@
-import {
-  DndContext,
-  closestCenter,
-  MouseSensor,
-  TouchSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import {
-  arrayMove,
-  SortableContext,
-  verticalListSortingStrategy, // <== doesn't break if this is rectSortingStrategy
-} from "@dnd-kit/sortable";
 import type { NextPage } from "next";
-import { useEffect, useState } from "react";
 import useSWR from "swr";
-import { SortableCard } from "@/components/SortableCard";
-
-type Todo = {
-  id: string;
-  content: string;
-  status: string;
-};
+import { Todos } from "@/components/Todos";
 
 const Test: NextPage = () => {
-  const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
   const { data, error } = useSWR(`http://localhost:3000/v1/todos`);
-  const [items, setItems] = useState<Todo[]>(data);
-
-  useEffect(() => {
-    if (data) {
-      setItems(data);
-    }
-  }, [data]);
-
-  const handleDragEnd = (event) => {
-    const { active, over } = event;
-
-    if (active.id !== over.id) {
-      setItems((items) => {
-        const oldIndex = items
-          .map((item) => item.id === active.id)
-          .indexOf(true);
-        console.log({ oldIndex });
-
-        const newIndex = items.map((item) => item.id === over.id).indexOf(true);
-
-        return arrayMove(items, oldIndex, newIndex);
-      });
-    }
-  };
-
-  if (!items) return <div>Loading</div>;
+  if (!data) return <div>Loading</div>;
 
   return (
-    <DndContext
-      autoScroll={false}
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragEnd={handleDragEnd}
-    >
-      <SortableContext items={items} strategy={verticalListSortingStrategy}>
-        {items?.map((item) => (
-          <SortableCard key={item.id} todo={item} />
-        ))}
-      </SortableContext>
-    </DndContext>
+    <div>
+      <main className="mx-auto mt-20 max-w-4xl">
+        <h1 className="my-10 text-4xl font-bold">Qin Todo</h1>
+        <div className="flex space-x-10">
+          <div className="w-[300px]">
+            <h2 className="mb-5 text-2xl font-bold">今日する</h2>
+            <Todos todos={data} status="TODAY" />
+          </div>
+          <div className="w-[300px]">
+            <h2 className="mb-5 text-2xl font-bold">明日する</h2>
+            <Todos todos={data} status="TOMORROW" />
+          </div>
+          <div className="w-[300px]">
+            <h2 className="mb-5 text-2xl font-bold">今度する</h2>
+            <Todos todos={data} status="NEXT" />
+          </div>
+        </div>
+      </main>
+    </div>
   );
 };
 

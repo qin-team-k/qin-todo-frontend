@@ -1,11 +1,11 @@
 import type { NextPage } from "next";
+import useSWR from "swr";
 import { Todos } from "@/components/Todos";
-import { useTodosSwr } from "@/fetch/useTodosSwr";
 
 const Home: NextPage = () => {
-  const { data, isLoading, isError } = useTodosSwr();
+  const { data, error } = useSWR(`http://localhost:3000/v1/todos`);
 
-  if (isLoading) return <div>Loading</div>;
+  if (!data) return <div>Loading</div>;
 
   return (
     <div>

@@ -93,9 +93,10 @@ const Home = () => {
   const [_activeId, setActiveId] = useState<string | null>(null);
 
   const sensors = useSensors(
-    useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
     })
   );
 

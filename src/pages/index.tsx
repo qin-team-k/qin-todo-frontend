@@ -1,25 +1,18 @@
 import {
   closestCorners,
-  CollisionDetection,
   DndContext,
   PointerSensor,
   useDroppable,
   useSensors,
   useSensor,
-  MouseSensor,
-  KeyboardSensor,
 } from "@dnd-kit/core";
 import {
   SortableContext,
   arrayMove,
   verticalListSortingStrategy,
-  SortingStrategy,
-  sortableKeyboardCoordinates,
 } from "@dnd-kit/sortable";
-import { PlusCircleIcon } from "@heroicons/react/solid";
 import axios from "axios";
 import { ChangeEvent, useEffect, useState } from "react";
-import { SubmitHandler, useForm, useFieldArray } from "react-hook-form";
 import useSWR, { mutate } from "swr";
 import { SortableItem } from "@/components/SortableItem";
 import { Todo } from "@/types";
@@ -181,8 +174,6 @@ const Home = () => {
                   if (overId in items) {
                     newIndex = overItems.length + 1;
                   } else {
-                    console.log({ activeReactCurrent: active.rect.current });
-
                     const isBelowLastItem =
                       over &&
                       overIndex === overItems.length - 1 &&

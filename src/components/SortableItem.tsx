@@ -2,8 +2,8 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { DuplicateIcon, TrashIcon } from "@heroicons/react/solid";
 import axios from "axios";
-import { ChangeEvent, FC, useRef, useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { FC, useState } from "react";
+import { useForm } from "react-hook-form";
 import { mutate } from "swr";
 import { Todo } from "../types";
 

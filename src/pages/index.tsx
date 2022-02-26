@@ -18,8 +18,8 @@ import {
 } from "@dnd-kit/sortable";
 import { PlusCircleIcon } from "@heroicons/react/solid";
 import axios from "axios";
-import { useEffect, useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { ChangeEvent, useEffect, useState } from "react";
+import { SubmitHandler, useForm, useFieldArray } from "react-hook-form";
 import useSWR, { mutate } from "swr";
 import { SortableItem } from "@/components/SortableItem";
 import { Todo } from "@/types";
@@ -81,17 +81,13 @@ const Home = () => {
   //   }
   // }, [data]);
 
-  const [isAdding, setIsAdding] = useState(false);
   const [items, setItems] = useState<Items>();
-  const [content, setContent] = useState();
 
   useEffect(() => {
     if (data) {
       setItems(data);
     }
   }, [data]);
-
-  console.log(items);
 
   const [clonedItems, setClonedItems] = useState<Items | null>(null);
   const [_activeId, setActiveId] = useState<string | null>(null);
@@ -125,12 +121,10 @@ const Home = () => {
     setClonedItems(null);
   };
 
-  const { register, handleSubmit } = useForm<Payload>({
-    mode: "onSubmit",
-    reValidateMode: "onChange",
-  });
-
-  const handleEnter = async (e, status: string) => {
+  const handleEnter = async (
+    e: ChangeEvent<HTMLInputElement>,
+    status: string
+  ) => {
     if (e.target.value === "") return;
     if (e.key === "Enter") {
       await axios.post("http://localhost:3000/v1/todos", {
@@ -139,17 +133,6 @@ const Home = () => {
       });
       mutate("http://localhost:3000/v1/todos");
     }
-  };
-
-  const handleOnSubmit: SubmitHandler<Payload> = async (data) => {
-    console.log(data);
-
-    if (data.content === "") return;
-    await axios.post("http://localhost:3000/v1/todos", {
-      content: data.content,
-      status: status,
-    });
-    mutate("http://localhost:3000/v1/todos");
   };
 
   if (!data) return <div>Loading...</div>;
@@ -229,7 +212,37 @@ const Home = () => {
               });
             }
           }}
-          onDragEnd={({ active, over }) => {
+          onDragEnd={async ({ active, over }) => {
+            const todoId = active.id;
+            const distId = over?.data.current?.sortable.index;
+            const containerId = active.data.current?.sortable.containerId;
+            const getStatus = () => {
+              switch (containerId) {
+                case "Sortable-1":
+                  return "TODAY";
+                case "Sortable-3":
+                  return "TOMORROW";
+                case "Sortable-5":
+                  return "NEXT";
+                default:
+                  return "";
+              }
+            };
+            const status = getStatus();
+
+            const activeTodo = items[status].find((item) => item.id === todoId);
+            const isDone = activeTodo?.done;
+            console.log(isDone);
+
+            await axios.put(
+              `http://localhost:3000/v1/todos/${todoId}/${distId}/order`,
+              {
+                status,
+                done: true,
+              }
+            );
+            mutate("http://localhost:3000/v1/todos");
+
             const activeContainer = findContainer(active.id);
             if (!activeContainer) {
               setActiveId(null);
@@ -284,36 +297,6 @@ const Home = () => {
                       className="bg-gray-200"
                       onKeyPress={(e) => handleEnter(e, key)}
                     />
-                    {/* {isAdding ? (
-                      <form onSubmit={handleSubmit(handleOnSubmit)}>
-                        <div className="flex items-center pl-1 space-x-1">
-                          <input className="focus:outline-none" type="radio" />
-                          <input
-                            className="focus:outline-none"
-                            type="text"
-                            placeholder="タスクを追加する"
-                            {...register("content")}
-                            autoFocus
-                          />
-                          <input
-                            type="text"
-                            {...register("status")}
-                            value={key}
-                          />
-                        </div>
-                      </form>
-                    ) : (
-                      <div className="flex items-center">
-                        <PlusCircleIcon className="h-5 text-gray-400" />
-                        <button
-                          className="text-gray-400"
-                          onClick={() => setIsAdding(true)}
-                        >
-                          タスクを追加する
-                        </button>
-                        <p>{key}</p>
-                      </div>
-                    )} */}
                   </div>
                 </DroppableContainer>
               </SortableContext>

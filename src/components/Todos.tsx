@@ -36,17 +36,17 @@ export const Todos: VFC<Props> = ({ todos, status }) => {
     mutate("http://localhost:3000/v1/todos");
   };
 
-  const handleToggle = async (id: number) => {
+  const handleToggle = async (id: string) => {
     await axios.put(`http://localhost:3000/v1/todos/${id}/toggle`);
     mutate("http://localhost:3000/v1/todos");
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string) => {
     await axios.delete(`http://localhost:3000/v1/todos/${id}`);
     mutate("http://localhost:3000/v1/todos");
   };
 
-  const handleDuplicate = async (id: number) => {
+  const handleDuplicate = async (id: string) => {
     await axios.post(`http://localhost:3000/v1/todos/${id}/duplicate`);
     mutate("http://localhost:3000/v1/todos");
   };

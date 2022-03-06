@@ -15,7 +15,6 @@ import axios from "axios";
 import Image from "next/image";
 import { ChangeEvent, useEffect, useState } from "react";
 import useSWR, { mutate } from "swr";
-import { Header } from "@/components/Header";
 import { SortableItem } from "@/components/SortableItem";
 import { Todo } from "@/types";
 
@@ -122,7 +121,7 @@ const Home = () => {
 
   return (
     <div className="flex flex-col justify-center mx-auto max-w-[1440px]">
-      <Header />
+      {/* <Header /> */}
       {items && (
         <DndContext
           sensors={sensors}

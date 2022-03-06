@@ -12,17 +12,14 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import axios from "axios";
+import Image from "next/image";
 import { ChangeEvent, useEffect, useState } from "react";
 import useSWR, { mutate } from "swr";
+import { Header } from "@/components/Header";
 import { SortableItem } from "@/components/SortableItem";
 import { Todo } from "@/types";
 
 type Items = Record<string, Todo[]>;
-
-type Payload = {
-  content: string;
-  status: string;
-};
 
 type DroppableContainerProps = {
   children: React.ReactNode;
@@ -59,20 +56,7 @@ const Home = () => {
     }
   };
 
-  const { data, error } = useSWR<Items>(`http://localhost:3000/v1/todos`);
-  // const todayTodo = data?.filter((todo) => todo.status === "TODAY");
-  // const tomorrowTodo = data?.filter((todo) => todo.status === "TOMORROW");
-  // const nextTodo = data?.filter((todo) => todo.status === "NEXT");
-
-  // useEffect(() => {
-  //   if (todayTodo && tomorrowTodo && nextTodo) {
-  //     setItems({
-  //       TODAY: todayTodo,
-  //       TOMORROW: tomorrowTodo,
-  //       NEXT: nextTodo,
-  //     });
-  //   }
-  // }, [data]);
+  const { data, error } = useSWR<Items>(`http://localhost:3000/api/v1/todos`);
 
   const [items, setItems] = useState<Items>();
 
@@ -121,11 +105,15 @@ const Home = () => {
   ) => {
     if (e.target.value === "") return;
     if (e.key === "Enter") {
-      await axios.post("http://localhost:3000/v1/todos", {
-        content: e.target.value,
-        status: status,
-      });
-      mutate("http://localhost:3000/v1/todos");
+      await axios.post(
+        "http://localhost:3000/api/v1/todos",
+        {
+          content: e.target.value,
+          status: status,
+        },
+        { withCredentials: true }
+      );
+      mutate("http://localhost:3000/api/v1/todos");
     }
   };
 
@@ -133,7 +121,8 @@ const Home = () => {
   if (error) return <div>Something went wrong</div>;
 
   return (
-    <div className="mx-auto max-w-6xl">
+    <div className="flex flex-col justify-center mx-auto max-w-[1440px]">
+      <Header />
       {items && (
         <DndContext
           sensors={sensors}
@@ -224,16 +213,16 @@ const Home = () => {
 
             const activeTodo = items[status].find((item) => item.id === todoId);
             const isDone = activeTodo?.done;
-            console.log(isDone);
 
             await axios.put(
-              `http://localhost:3000/v1/todos/${todoId}/${distId}/order`,
+              `http://localhost:3000/api/v1/todos/${todoId}/order`,
               {
                 status,
-                done: true,
-              }
+                index: distId,
+              },
+              { withCredentials: true }
             );
-            mutate("http://localhost:3000/v1/todos");
+            mutate("http://localhost:3000/api/v1/todos");
 
             const activeContainer = findContainer(active.id);
             if (!activeContainer) {
@@ -268,7 +257,7 @@ const Home = () => {
           }}
           onDragCancel={handleDragCancel}
         >
-          <div className="inline-grid grid-cols-3 gap-12 items-start w-[800px] h-screen">
+          <div className="inline-grid grid-cols-3 gap-24 items-start h-screen">
             {Object.entries(items).map(([key, values]) => (
               <SortableContext
                 key={key}
@@ -276,17 +265,33 @@ const Home = () => {
                 strategy={verticalListSortingStrategy}
               >
                 <DroppableContainer id={key}>
-                  <h1 className="py-4 text-xl font-bold">
-                    {getContainerName(key)}
-                  </h1>
+                  {key === "TODAY" ? (
+                    <h1 className="py-4 text-xl font-bold text-primary-rose">
+                      {getContainerName(key)}
+                    </h1>
+                  ) : key === "TOMORROW" ? (
+                    <h1 className="py-4 text-xl font-bold text-secondary-orange">
+                      明日する
+                    </h1>
+                  ) : (
+                    <h1 className="py-4 text-xl font-bold text-tertiary-yellow">
+                      {getContainerName(key)}
+                    </h1>
+                  )}
                   {values.map((todo) => (
                     <SortableItem key={todo.id} todo={todo} />
                   ))}
-                  <div>
+                  <div className="flex items-center">
+                    <Image
+                      src="/plus-circle.svg"
+                      alt="plus-circle"
+                      width={24}
+                      height={24}
+                    />
                     <input
+                      className="ml-2 focus:outline-none"
                       type="text"
                       placeholder="タスクを追加する"
-                      className="bg-gray-200"
                       onKeyPress={(e) => handleEnter(e, key)}
                     />
                   </div>

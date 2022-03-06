@@ -1,7 +1,7 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { DuplicateIcon, TrashIcon } from "@heroicons/react/solid";
 import axios from "axios";
+import Image from "next/image";
 import { FC, useState } from "react";
 import { useForm } from "react-hook-form";
 import { mutate } from "swr";
@@ -31,38 +31,53 @@ export const SortableItem: FC<Props> = ({ todo }) => {
   };
 
   const handleToggle = async (id: string) => {
-    await axios.put(`http://localhost:3000/v1/todos/${id}/toggle`);
-    mutate("http://localhost:3000/v1/todos");
+    await axios.put(
+      `http://localhost:3000/api/v1/todos/${id}/toggle`,
+      {},
+      { withCredentials: true }
+    );
+    mutate("http://localhost:3000/api/v1/todos");
   };
 
   const handleDelete = async (id: string) => {
-    await axios.delete(`http://localhost:3000/v1/todos/${id}`);
-    mutate("http://localhost:3000/v1/todos");
+    await axios.delete(`http://localhost:3000/api/v1/todos/${id}`, {
+      withCredentials: true,
+    });
+    mutate("http://localhost:3000/api/v1/todos");
   };
 
   const handleDuplicate = async (id: string) => {
-    await axios.post(`http://localhost:3000/v1/todos/${id}/duplicate`);
-    mutate("http://localhost:3000/v1/todos");
+    await axios.post(
+      `http://localhost:3000/api/v1/todos/${id}/duplicate`,
+      {},
+      { withCredentials: true }
+    );
+    mutate("http://localhost:3000/api/v1/todos");
   };
 
   const handleOnSubmit = async () => {
-    await axios.put(`http://localhost:3000/v1/todos/${todo.id}`, {
-      content: content,
-    });
-    mutate("http://localhost:3000/v1/todos");
+    await axios.put(
+      `http://localhost:3000/api/v1/todos/${todo.id}`,
+      {
+        content: content,
+      },
+      { withCredentials: true }
+    );
+    mutate("http://localhost:3000/api/v1/todos");
     setIsAdding(false);
   };
 
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
       <div className={`flex justify-between`}>
-        <div className="flex items-center pl-1 space-x-1">
+        <div className="flex items-center space-x-2">
           <input
-            className="focus:outline-none"
+            className="float-left w-[24px] h-[24px] bg-white checked:bg-primary-rose bg-center bg-no-repeat bg-contain rounded-full border border-gray-300 focus:outline-none transition duration-200 appearance-none cursor-pointer"
             type="checkbox"
             checked={todo.done}
             onChange={() => handleToggle(todo.id)}
           />
+
           {isAdding ? (
             <div className="flex">
               <input
@@ -85,17 +100,22 @@ export const SortableItem: FC<Props> = ({ todo }) => {
               className={`${todo.done ? "line-through" : null} opacity-50`}
               onClick={() => setIsAdding(true)}
             >
-              {/* {todo.content} */}
-              {`${todo.id}:${todo.content}`}
+              {todo.content}
+              {/* {`${todo.id}:${todo.content}`} */}
             </button>
           )}
         </div>
-        <div className="flex">
+        <div className="flex space-x-2">
           <button onClick={() => handleDuplicate(todo.id)}>
-            <DuplicateIcon className="h-5" />
+            <Image
+              src="/duplicate.svg"
+              alt="duplicate"
+              width={15}
+              height={15}
+            />
           </button>
           <button onClick={() => handleDelete(todo.id)}>
-            <TrashIcon className="h-5" />
+            <Image src="/trash.svg" alt="trash" width={15} height={15} />
           </button>
         </div>
       </div>

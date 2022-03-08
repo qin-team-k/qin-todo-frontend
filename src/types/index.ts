@@ -1,4 +1,4 @@
-export type Todo = {
+export type TodoType = {
   id: string;
   content: string;
   createdAt: Date;
@@ -8,7 +8,7 @@ export type Todo = {
   userId: string;
 };
 
-export type User = {
+export type UserType = {
   id: string;
   avatarUrl: string;
   createdAt: Date;

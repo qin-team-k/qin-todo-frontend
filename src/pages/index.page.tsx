@@ -15,10 +15,10 @@ import axios from "axios";
 import Image from "next/image";
 import { ChangeEvent, useEffect, useState } from "react";
 import useSWR, { mutate } from "swr";
-import { SortableItem } from "@/components/SortableItem";
-import { Todo } from "@/types";
+import { SortableItem } from "src/components/SortableItem";
+import { TodoType } from "src/types";
 
-type Items = Record<string, Todo[]>;
+type Items = Record<string, TodoType[]>;
 
 type DroppableContainerProps = {
   children: React.ReactNode;

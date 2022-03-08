@@ -1,9 +1,6 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"]
-    },
     "allowJs": true,
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,

@@ -23,7 +23,7 @@ const Profile: NextPage = () => {
           </h2>
           <SettingRow
             text="プライバシーポリシー"
-            href="/setting//support/privacy-policy"
+            href="/setting/support/privacy-policy"
           />
           <SettingRow text="利用規約" href="/setting/support/terms" />
           <SettingRow text="お問い合わせ" href="/setting/support/contact" />

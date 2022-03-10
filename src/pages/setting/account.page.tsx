@@ -1,18 +1,25 @@
 import type { NextPage } from "next";
-import { useAuthUser } from "next-firebase-auth";
 import Image from "next/image";
-import { useCallback } from "react";
+import { useState } from "react";
 import { Button } from "src/components/Button";
+import { Modal } from "src/components/Modal";
 import { SettingHeader } from "src/components/SettingHeader";
 import { Layout } from "src/layout";
-
 import { withUser } from "src/util/user";
 
 const Account: NextPage = () => {
-  const authUser = useAuthUser();
-  const handleSignOut = useCallback(() => {
-    return authUser.signOut();
-  }, [authUser]);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [modalType, setModalType] = useState<"logout" | "delete">("logout");
+
+  const handleDeleteModalOpen = () => {
+    setIsOpen(true);
+    setModalType("delete");
+  };
+
+  const handleLogoutModalOpen = () => {
+    setIsOpen(true);
+    setModalType("logout");
+  };
 
   return (
     <div>
@@ -53,13 +60,17 @@ const Account: NextPage = () => {
           </h2>
           <button
             className="block mr-5 font-bold text-danger-red"
-            onClick={handleSignOut}
+            onClick={handleLogoutModalOpen}
           >
             ログアウト
           </button>
-          <button className="block mr-5 font-bold text-danger-red">
+          <button
+            className="block mr-5 font-bold text-danger-red"
+            onClick={handleDeleteModalOpen}
+          >
             アカウントの削除
           </button>
+          <Modal modalType={modalType} isOpen={isOpen} setIsOpen={setIsOpen} />
         </div>
       </Layout>
     </div>

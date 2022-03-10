@@ -11,7 +11,7 @@ export const useUser = () => {
     mutate: setUser,
     error,
     ...rest
-  } = useSWRImmutable<UserType>(authUser.id ? `${API_URL}/auth/users` : null);
+  } = useSWRImmutable<UserType>(authUser.id ? `${API_URL}/users` : null);
 
   return {
     user,

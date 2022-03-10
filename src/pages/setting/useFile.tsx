@@ -1,9 +1,6 @@
 import type { ChangeEvent } from "react";
 import { useCallback, useRef, useState } from "react";
 
-/**
- * @package
- */
 export const useFile = () => {
   const imageRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File>();

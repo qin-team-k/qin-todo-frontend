@@ -2,10 +2,12 @@ import { Menu, Transition } from "@headlessui/react";
 import { CogIcon, LogoutIcon } from "@heroicons/react/outline";
 import { useAuthUser } from "next-firebase-auth";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import { Fragment, useCallback } from "react";
 import { useUser } from "src/util/user";
 
 export const Header = () => {
+  const router = useRouter();
   const { user } = useUser();
   const authUser = useAuthUser();
   const handleSignOut = useCallback(() => {
@@ -54,6 +56,7 @@ export const Header = () => {
                               ? "text-white bg-primary-rose"
                               : "text-gray-900"
                           } group flex rounded-md items-center w-full px-2 py-2 text-sm font-bold`}
+                          onClick={() => router.push("/setting/edit")}
                         >
                           {active ? (
                             <CogIcon

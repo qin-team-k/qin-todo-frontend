@@ -2,7 +2,6 @@ import type { NextPage } from "next";
 import { SettingHeader } from "src/components/SettingHeader";
 import { SettingRow } from "src/components/SettingRow";
 import { Layout } from "src/layout";
-
 import { useUser, withUser } from "src/util/user";
 
 const Profile: NextPage = () => {

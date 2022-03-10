@@ -45,10 +45,10 @@ const UserController: VFC<{ children: ReactNode }> = (props) => {
     if (isLoading) {
       return;
     }
-    if (user && isNewUserPage) {
-      router.push("/");
-      return;
-    }
+    // if (user && isNewUserPage) {
+    //   router.push("/");
+    //   return;
+    // }
     if (!user && !isNewUserPage) {
       router.push(NEW_USER_PAGE);
       return;

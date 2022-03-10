@@ -1,6 +1,6 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import axios from "axios";
+import { useAuthUser } from "next-firebase-auth";
 import Image from "next/image";
 import { FC, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -16,6 +16,7 @@ type Payload = {
 };
 
 export const SortableItem: FC<Props> = ({ todo }) => {
+  const authUser = useAuthUser();
   const [isAdding, setIsAdding] = useState(false);
   const [content, setContent] = useState(todo.content);
   const { register, handleSubmit, control } = useForm();
@@ -31,38 +32,63 @@ export const SortableItem: FC<Props> = ({ todo }) => {
   };
 
   const handleToggle = async (id: string) => {
-    await axios.put(
-      `http://localhost:3000/api/v1/todos/${id}/toggle`,
-      {},
-      { withCredentials: true }
-    );
-    mutate("http://localhost:3000/api/v1/todos");
-  };
-
-  const handleDelete = async (id: string) => {
-    await axios.delete(`http://localhost:3000/api/v1/todos/${id}`, {
-      withCredentials: true,
+    const idToken = await authUser.getIdToken();
+    await fetch(`http://localhost:3000/api/v1/todos/${id}/toggle`, {
+      method: "PUT",
+      headers: {
+        authorization: `Bearer ${idToken}`,
+        "content-type": "application/json",
+      },
+      // FIXME なぜかbodyが必要
+      body: JSON.stringify({
+        id,
+      }),
     });
     mutate("http://localhost:3000/api/v1/todos");
   };
 
+  const handleDelete = async (id: string) => {
+    const idToken = await authUser.getIdToken();
+    await fetch(`http://localhost:3000/api/v1/todos/${id}`, {
+      method: "DELETE",
+      headers: {
+        authorization: `Bearer ${idToken}`,
+        "content-type": "application/json",
+      },
+    });
+
+    mutate("http://localhost:3000/api/v1/todos");
+  };
+
   const handleDuplicate = async (id: string) => {
-    await axios.post(
-      `http://localhost:3000/api/v1/todos/${id}/duplicate`,
-      {},
-      { withCredentials: true }
-    );
+    const idToken = await authUser.getIdToken();
+    await fetch(`http://localhost:3000/api/v1/todos/${id}/duplicate`, {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${idToken}`,
+        "content-type": "application/json",
+      },
+      // FIXME なぜかbodyが必要
+      body: JSON.stringify({
+        id,
+      }),
+    });
     mutate("http://localhost:3000/api/v1/todos");
   };
 
   const handleOnSubmit = async () => {
-    await axios.put(
-      `http://localhost:3000/api/v1/todos/${todo.id}`,
-      {
-        content: content,
+    const idToken = await authUser.getIdToken();
+    await fetch(`http://localhost:3000/api/v1/todos/${todo.id}`, {
+      method: "PUT",
+      headers: {
+        authorization: `Bearer ${idToken}`,
+        "content-type": "application/json",
       },
-      { withCredentials: true }
-    );
+      // FIXME なぜかbodyが必要
+      body: JSON.stringify({
+        content,
+      }),
+    });
     mutate("http://localhost:3000/api/v1/todos");
     setIsAdding(false);
   };

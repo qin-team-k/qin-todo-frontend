@@ -1,18 +1,13 @@
 import type { NextPage } from "next";
-import { AuthAction, withAuthUser } from "next-firebase-auth";
-import { Loader } from "src/components/Loader";
+import { useUser, withUser } from "src/util/user";
 
-const Login: NextPage = () => {
+const Profile: NextPage = () => {
+  const { user } = useUser();
   return (
     <div>
-      <h2>profile</h2>
+      <h2>{user?.email}</h2>
     </div>
   );
 };
 
-export default withAuthUser({
-  whenAuthed: AuthAction.REDIRECT_TO_APP,
-  whenUnauthedBeforeInit: AuthAction.SHOW_LOADER,
-  whenUnauthedAfterInit: AuthAction.RENDER,
-  LoaderComponent: Loader,
-})(Login);
+export default withUser(Profile);

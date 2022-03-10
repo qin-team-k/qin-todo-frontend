@@ -11,12 +11,14 @@ import {
   arrayMove,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import axios from "axios";
+import { useAuthUser } from "next-firebase-auth";
 import Image from "next/image";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import useSWR, { mutate } from "swr";
+import { Header } from "src/components/Header";
 import { SortableItem } from "src/components/SortableItem";
 import { TodoType } from "src/types";
+import { withUser } from "src/util/user";
 
 type Items = Record<string, TodoType[]>;
 
@@ -42,6 +44,11 @@ const DroppableContainer = ({ children, id }: DroppableContainerProps) => {
 };
 
 const Home = () => {
+  const authUser = useAuthUser();
+  const handleSignOut = useCallback(() => {
+    return authUser.signOut();
+  }, [authUser]);
+
   const getContainerName = (key: string): string => {
     switch (key) {
       case "TODAY":
@@ -104,14 +111,19 @@ const Home = () => {
   ) => {
     if (e.target.value === "") return;
     if (e.key === "Enter") {
-      await axios.post(
-        "http://localhost:3000/api/v1/todos",
-        {
+      const idToken = await authUser.getIdToken();
+      await fetch("http://localhost:3000/api/v1/todos", {
+        method: "POST",
+        headers: {
+          authorization: `Bearer ${idToken}`,
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
           content: e.target.value,
           status: status,
-        },
-        { withCredentials: true }
-      );
+        }),
+      });
+
       mutate("http://localhost:3000/api/v1/todos");
     }
   };
@@ -121,7 +133,7 @@ const Home = () => {
 
   return (
     <div className="flex flex-col justify-center mx-auto max-w-[1440px]">
-      {/* <Header /> */}
+      <Header />
       {items && (
         <DndContext
           sensors={sensors}
@@ -212,15 +224,20 @@ const Home = () => {
 
             const activeTodo = items[status].find((item) => item.id === todoId);
             const isDone = activeTodo?.done;
-
-            await axios.put(
-              `http://localhost:3000/api/v1/todos/${todoId}/order`,
-              {
+            // FIXME indexを変える
+            const idToken = await authUser.getIdToken();
+            await fetch(`http://localhost:3000/api/v1/todos/${todoId}/order`, {
+              method: "PUT",
+              headers: {
+                authorization: `Bearer ${idToken}`,
+                "content-type": "application/json",
+              },
+              body: JSON.stringify({
                 status,
                 index: distId,
-              },
-              { withCredentials: true }
-            );
+              }),
+            });
+
             mutate("http://localhost:3000/api/v1/todos");
 
             const activeContainer = findContainer(active.id);
@@ -304,4 +321,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default withUser(Home);

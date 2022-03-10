@@ -546,6 +546,11 @@
     protobufjs "^6.10.0"
     yargs "^16.2.0"
 
+"@headlessui/react@^1.5.0":
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/@headlessui/react/-/react-1.5.0.tgz#483b44ba2c8b8d4391e1d2c863898d7dd0cc0296"
+  integrity sha512-aaRnYxBb3MU2FNJf3Ut9RMTUqqU3as0aI1lQhgo2n9Fa67wRu14iOGqx93xB+uMNVfNwZ5B3y/Ndm7qZGuFeMQ==
+
 "@heroicons/react@^1.0.5":
   version "1.0.5"
   resolved "https://registry.npmjs.org/@heroicons/react/-/react-1.0.5.tgz"
@@ -1209,6 +1214,11 @@ cliui@^7.0.2:
     string-width "^4.2.0"
     strip-ansi "^6.0.0"
     wrap-ansi "^7.0.0"
+
+clsx@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/clsx/-/clsx-1.1.1.tgz#98b3134f9abbdf23b2663491ace13c5c03a73188"
+  integrity sha512-6/bPho624p3S2pMyvP5kKBPXnI3ufHLObBFCfgx+LkeR5lg2XYy2hqZqUf45ypD8COn2bhgGJSUE+l5dhNBieA==
 
 color-convert@^1.9.0:
   version "1.9.3"
@@ -2041,6 +2051,11 @@ globby@^11.0.4:
     merge2 "^1.4.1"
     slash "^3.0.0"
 
+goober@^2.1.1:
+  version "2.1.8"
+  resolved "https://registry.yarnpkg.com/goober/-/goober-2.1.8.tgz#e592c04d093cb38f77b38cfcb012b7811c85765e"
+  integrity sha512-S0C85gCzcfFCMSdjD/CxyQMt1rbf2qEg6hmDzxk2FfD7+7Ogk55m8ZFUMtqNaZM4VVX/qaU9AzSORG+Gf4ZpAQ==
+
 google-auth-library@^7.0.0, google-auth-library@^7.14.0:
   version "7.14.0"
   resolved "https://registry.yarnpkg.com/google-auth-library/-/google-auth-library-7.14.0.tgz#9d6a20592f7b4d4c463cd3e93934c4b1711d5dc6"
@@ -2719,6 +2734,11 @@ next-firebase-auth@^1.0.0-canary.7:
     cookies "^0.8.0"
     hoist-non-react-statics "^3.3.2"
 
+next-themes@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/next-themes/-/next-themes-0.1.1.tgz#122113a458bf1d1be5ffed66778ab924c106f82a"
+  integrity sha512-Iqxt6rhS/KfK/iHJ0tfFjTcdLEAI0AgwFuAFrMwLOPK5e+MI3I+fzyvBoS+VaOS+NldUiazurhgwYhrfV0VXsQ==
+
 next@12.1.0:
   version "12.1.0"
   resolved "https://registry.npmjs.org/next/-/next-12.1.0.tgz"
@@ -3111,6 +3131,13 @@ react-hook-form@^7.27.1:
   version "7.27.1"
   resolved "https://registry.npmjs.org/react-hook-form/-/react-hook-form-7.27.1.tgz"
   integrity sha512-N3a7A6zIQ8DJeThisVZGtOUabTbJw+7DHJidmB9w8m3chckv2ZWKb5MHps9d2pPJqmCDoWe53Bos56bYmJms5w==
+
+react-hot-toast@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/react-hot-toast/-/react-hot-toast-2.2.0.tgz#ab6f4caed4214b9534f94bb8cfaaf21b051e62b9"
+  integrity sha512-248rXw13uhf/6TNDVzagX+y7R8J183rp7MwUMNkcrBRyHj/jWOggfXTGlM8zAOuh701WyVW+eUaWG2LeSufX9g==
+  dependencies:
+    goober "^2.1.1"
 
 react-is@^16.13.1, react-is@^16.7.0:
   version "16.13.1"

@@ -1,20 +1,21 @@
 import type { NextPage } from "next";
 import { AuthAction, useAuthUser, withAuthUser } from "next-firebase-auth";
 import { useRouter } from "next/router";
-import type { ReactNode, VFC } from "react";
-import { useCallback, useEffect, useMemo } from "react";
+import { ReactNode, useCallback, useEffect, useMemo, VFC } from "react";
 import { SWRConfig } from "swr";
-
 import { useUser } from "./useUser";
 
 export const useFetcher = () => {
   const authUser = useAuthUser();
+
   return useCallback(
     async (key: string) => {
       const idToken = await authUser.getIdToken();
+
       const res = await fetch(key, {
         headers: { authorization: `Bearer ${idToken}` },
       });
+
       if (!res.ok) {
         throw new Error();
       }
@@ -25,7 +26,7 @@ export const useFetcher = () => {
   );
 };
 
-const NEW_USER_PAGE = "/setting/qin/user/new";
+const NEW_USER_PAGE = "/setting/edit";
 const WHITE_LIST_PAGES = ["/user/[userName]", "/memo/[noteId]", "/404"];
 
 const UserController: VFC<{ children: ReactNode }> = (props) => {
@@ -62,21 +63,11 @@ const UserController: VFC<{ children: ReactNode }> = (props) => {
   return null;
 };
 
-/**
- * @package
- */
-export const withUser = (
-  Component: NextPage<any>,
-  options?: Record<string, unknown>
-) => {
-  return withAuthUser(
-    options
-      ? options
-      : {
-          whenUnauthedBeforeInit: AuthAction.SHOW_LOADER,
-          whenUnauthedAfterInit: AuthAction.REDIRECT_TO_LOGIN,
-        }
-  )((props) => {
+export const withUser = (Component: NextPage<any>) => {
+  return withAuthUser({
+    whenUnauthedBeforeInit: AuthAction.SHOW_LOADER,
+    whenUnauthedAfterInit: AuthAction.REDIRECT_TO_LOGIN,
+  })((props) => {
     const fetcher = useFetcher();
 
     return (

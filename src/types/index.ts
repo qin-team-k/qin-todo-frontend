@@ -10,9 +10,10 @@ export type TodoType = {
 
 export type UserType = {
   id: string;
+  uid: string;
+  username: string;
+  email: string;
   avatarUrl: string;
   createdAt: Date;
-  email: string;
   updatedAt: Date;
-  username: string;
 };

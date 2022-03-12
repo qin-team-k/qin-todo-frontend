@@ -13,7 +13,7 @@ import {
 } from "@dnd-kit/sortable";
 import { useAuthUser } from "next-firebase-auth";
 import Image from "next/image";
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import useSWR, { mutate } from "swr";
 import { Header } from "src/components/Header";
 import { SortableItem } from "src/components/SortableItem";
@@ -45,9 +45,6 @@ const DroppableContainer = ({ children, id }: DroppableContainerProps) => {
 
 const Home = () => {
   const authUser = useAuthUser();
-  const handleSignOut = useCallback(() => {
-    return authUser.signOut();
-  }, [authUser]);
 
   const getContainerName = (key: string): string => {
     switch (key) {
@@ -65,6 +62,7 @@ const Home = () => {
   const { data, error } = useSWR<Items>(`http://localhost:3000/api/v1/todos`);
 
   const [items, setItems] = useState<Items>();
+  const [input, setInput] = useState<string>();
 
   useEffect(() => {
     if (data) {
@@ -125,6 +123,7 @@ const Home = () => {
       });
 
       mutate("http://localhost:3000/api/v1/todos");
+      e.target.value = "";
     }
   };
 

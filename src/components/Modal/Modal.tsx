@@ -2,7 +2,6 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { useAuthUser } from "next-firebase-auth";
 import { Fragment, useCallback, VFC } from "react";
-import { useUser } from "src/util/user";
 
 type Props = {
   isOpen: boolean;
@@ -12,7 +11,6 @@ type Props = {
 
 export const Modal: VFC<Props> = ({ isOpen, setIsOpen, modalType }) => {
   const authUser = useAuthUser();
-  const { user } = useUser();
 
   const handleSignOut = useCallback(() => {
     return authUser.signOut();
@@ -20,7 +18,7 @@ export const Modal: VFC<Props> = ({ isOpen, setIsOpen, modalType }) => {
 
   const handleDeleteUser = async () => {
     const idToken = await authUser.getIdToken();
-    await fetch(`http://localhost:3000/api/v1/users/${user?.uid}`, {
+    await fetch(`http://localhost:3000/api/v1/users/delete`, {
       method: "DELETE",
       headers: {
         authorization: `Bearer ${idToken}`,

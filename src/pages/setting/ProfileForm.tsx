@@ -1,33 +1,41 @@
 import { useAuthUser } from "next-firebase-auth";
-import type { VFC } from "react";
+import { ChangeEvent, useRef, useState, VFC } from "react";
 import { useForm } from "react-hook-form";
-import { useFile } from "./useFile";
 import { useUpsertUser } from "./useUpsertUser";
 import { Avatar } from "src/components/Avatar";
 import { Input } from "src/components/Form";
 import { useUser } from "src/util/user";
 
-export type UserForm = { accountName: string; userName: string };
+export type UserForm = { username: string; avatarUrl: string };
 
 type ProfileFormProps = { accountName?: string; userName?: string };
 
 export const ProfileForm: VFC<ProfileFormProps> = () => {
   const authUser = useAuthUser();
+  // FIXME こっから自分の記述
+  const [selectedFile, setSelectedFile] = useState<File>();
+  const [imageUrl, setImageUrl] = useState<string>();
+
+  const imageRef = useRef<HTMLInputElement>(null);
+  const handleOpenFileDialog = () => {
+    imageRef.current?.click();
+  };
+
+  const handleChangeFile = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target?.files?.item(0);
+    if (!file) return;
+    setSelectedFile(file);
+    const url = URL.createObjectURL(file);
+    setImageUrl(url);
+    console.log(file);
+    console.log(url);
+  };
 
   const { user } = useUser();
-  const {
-    selectedFile,
-    imageUrl,
-    imageRef,
-    handleChangeFile,
-    handleOpenFileDialog,
-  } = useFile();
+
   const { isUpserting, upsertUser } = useUpsertUser(selectedFile);
   const { register, handleSubmit, formState } = useForm<UserForm>({
-    defaultValues: {
-      accountName: user?.username ?? authUser.displayName ?? "",
-      userName: user?.username ?? "",
-    },
+    defaultValues: { username: user?.username ?? "" },
   });
 
   return (
@@ -66,12 +74,12 @@ export const ProfileForm: VFC<ProfileFormProps> = () => {
 
         <Input
           label="名前"
-          {...register("accountName", {
+          {...register("username", {
             required: { value: true, message: "入力必須です" },
             maxLength: { value: 64, message: "64文字以下にする必要があります" },
             minLength: { value: 2, message: "2文字以上にする必要があります" },
           })}
-          error={formState.errors.accountName?.message}
+          error={formState.errors.username?.message}
         />
       </div>
 

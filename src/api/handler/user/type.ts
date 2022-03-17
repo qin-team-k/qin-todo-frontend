@@ -1,9 +1,11 @@
 export type UserType = {
   id: string;
-  userName: string;
-  accountName: string;
+  uid: string;
+  username: string;
+  email: string;
   avatarUrl: string;
-  enabledQinMemo: boolean;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export const isUserType = (data: any): data is UserType => {

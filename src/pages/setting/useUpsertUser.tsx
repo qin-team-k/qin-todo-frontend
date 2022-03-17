@@ -5,7 +5,6 @@ import { useCallback, useState } from "react";
 import toast from "react-hot-toast";
 import type { UserForm } from "./ProfileForm";
 import { API_URL } from "src/api/endpoint";
-import type { UserType } from "src/api/handler/user/type";
 import { isUserType } from "src/api/handler/user/type";
 import { useUser } from "src/util/user";
 
@@ -28,49 +27,32 @@ export const useUpsertUser = (selectedFile?: File) => {
 
   const onSubmit = useCallback(
     async (formData: UserForm) => {
-      if (!authUser.id) {
-        await router.push("/auth/signin");
-        throw new Error("再度ログインする必要があります");
-      }
-
-      // ユーザー名の重複が無いか確認
-      if (user?.userName !== formData.userName) {
-        const getUserResponse = await fetch(
-          `${API_URL}/users/${formData.userName}`
-        );
-        const searchedUser: UserType | undefined = await getUserResponse.json();
-        if (formData.userName === searchedUser?.userName) {
-          throw new Error("既に存在するユーザー名です");
-        }
-      }
-
-      // 画像の登録処理
+      // 画像の登録処理;
       if (selectedFile) {
         const storage = getStorage();
         await uploadBytes(ref(storage, authUser.id), selectedFile);
         // TODO: 現在画像のリサイズに時間がかかっており、表示できなくなるため、あえて2秒待機させる
         await sleep(2000);
       }
+      console.log(formData);
 
       // ユーザー情報の更新処理
       const idToken = await authUser.getIdToken();
-      const res = await fetch(
-        user ? `${API_URL}/users/${user.username}` : `${API_URL}/users`,
-        {
-          method: user ? "PUT" : "POST",
-          headers: {
-            authorization: `Bearer ${idToken}`,
-            "content-type": "application/json",
-          },
-          body: JSON.stringify({
-            ...formData,
-            uid: authUser.id,
-            avatarUrl: selectedFile
-              ? createAvatarUrl(authUser.id)
-              : user?.avatarUrl ?? authUser.photoURL,
-          }),
-        }
-      );
+      console.log(idToken);
+
+      const res = await fetch(`${API_URL}/users/${user?.id}`, {
+        method: "PUT",
+        headers: {
+          authorization: `Bearer ${idToken}`,
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          ...formData,
+          // avatarUrl: selectedFile
+          //   ? createAvatarUrl(authUser.id)
+          //   : user?.avatarUrl ?? authUser.photoURL,
+        }),
+      });
 
       // レスポンスの処理
       const data = await res.json();
@@ -97,13 +79,8 @@ export const useUpsertUser = (selectedFile?: File) => {
           return error.message ?? "失敗しました";
         },
       });
-
-      // 新規登録の場合はリダイレクト
-      if (!user) {
-        await router.push("/");
-      }
     },
-    [onSubmit, router, setUser, user]
+    [onSubmit, setUser, user]
   );
 
   return { isUpserting, upsertUser };

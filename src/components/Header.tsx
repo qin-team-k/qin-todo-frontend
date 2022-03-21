@@ -1,5 +1,5 @@
 import { Menu, Transition } from "@headlessui/react";
-import { CogIcon, LogoutIcon } from "@heroicons/react/outline";
+import { CogIcon, LogoutIcon, UserCircleIcon } from "@heroicons/react/outline";
 import { useAuthUser } from "next-firebase-auth";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -9,6 +9,7 @@ import { useUser } from "src/util/user";
 export const Header = () => {
   const router = useRouter();
   const { user } = useUser();
+
   const authUser = useAuthUser();
   const handleSignOut = useCallback(() => {
     return authUser.signOut();
@@ -28,13 +29,14 @@ export const Header = () => {
             <Menu as="div" className="inline-block relative text-left">
               <div>
                 <Menu.Button>
-                  <Image
+                  <UserCircleIcon className="h-10" />
+                  {/* <Image
                     className="rounded-full"
                     src={user.avatarUrl}
                     alt="qin-todo-logo"
                     width={34}
                     height={34}
-                  />
+                  /> */}
                 </Menu.Button>
               </div>
               <Transition

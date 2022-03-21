@@ -3,8 +3,14 @@ const nextConfig = {
   reactStrictMode: true,
   pageExtensions: ["page.tsx", "page.ts"],
   images: {
-    domains: ["lh3.googleusercontent.com"],
+    domains: ["lh3.googleusercontent.com, storage.googleapis.com"],
   },
 };
 
-module.exports = nextConfig;
+module.exports = {
+  reactStrictMode: true,
+  pageExtensions: ["page.tsx", "page.ts"],
+  images: {
+    domains: ["lh3.googleusercontent.com, storage.googleapis.com"],
+  },
+};

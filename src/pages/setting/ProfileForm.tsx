@@ -2,6 +2,7 @@ import { useAuthUser } from "next-firebase-auth";
 import { ChangeEvent, useRef, useState, VFC } from "react";
 import { useForm } from "react-hook-form";
 import { useUpsertUser } from "./useUpsertUser";
+import { API_URL } from "src/api/endpoint";
 import { Avatar } from "src/components/Avatar";
 import { Input } from "src/components/Form";
 import { useUser } from "src/util/user";
@@ -11,6 +12,7 @@ export type UserForm = { username: string; avatarUrl: string };
 type ProfileFormProps = { accountName?: string; userName?: string };
 
 export const ProfileForm: VFC<ProfileFormProps> = () => {
+  const { user } = useUser();
   const authUser = useAuthUser();
   // FIXME こっから自分の記述
   const [selectedFile, setSelectedFile] = useState<File>();
@@ -23,15 +25,27 @@ export const ProfileForm: VFC<ProfileFormProps> = () => {
 
   const handleChangeFile = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target?.files?.item(0);
+
     if (!file) return;
-    setSelectedFile(file);
     const url = URL.createObjectURL(file);
     setImageUrl(url);
-    console.log(file);
-    console.log(url);
-  };
 
-  const { user } = useUser();
+    const base64 = await fetch(url);
+    const blob = await base64.blob();
+    const formData = new FormData();
+    formData.append("file", blob, file.name);
+
+    // ユーザー情報の更新処理
+    const idToken = await authUser.getIdToken();
+    await fetch(`${API_URL}/users/${user?.id}/avatar`, {
+      method: "PUT",
+      headers: {
+        authorization: `Bearer ${idToken}`,
+        // "content-type": "multipart/form-data",
+      },
+      body: formData,
+    });
+  };
 
   const { isUpserting, upsertUser } = useUpsertUser(selectedFile);
   const { register, handleSubmit, formState } = useForm<UserForm>({
@@ -47,13 +61,18 @@ export const ProfileForm: VFC<ProfileFormProps> = () => {
               <label className="block mb-1 text-sm font-bold text-gray-400">
                 アイコン
               </label>
+              {/* <img
+                className="w-24 h-24 rounded-full"
+                src={imageUrl ?? user?.avatarUrl ?? authUser.photoURL ?? ""}
+                alt="image"
+              /> */}
               <Avatar
                 noDialog
                 src={imageUrl ?? user?.avatarUrl ?? authUser.photoURL ?? ""}
                 alt={user?.username}
                 width={96}
                 height={96}
-                className="w-24 h-24"
+                className="w-24 h-24 rounded-full"
               />
             </div>
             <input

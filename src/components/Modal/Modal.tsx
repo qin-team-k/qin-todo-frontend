@@ -18,7 +18,7 @@ export const Modal: VFC<Props> = ({ isOpen, setIsOpen, modalType }) => {
 
   const handleDeleteUser = async () => {
     const idToken = await authUser.getIdToken();
-    await fetch(`http://localhost:3000/api/v1/users/delete`, {
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/users/delete`, {
       method: "DELETE",
       headers: {
         authorization: `Bearer ${idToken}`,

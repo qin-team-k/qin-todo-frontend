@@ -29,26 +29,28 @@ export const Todos: VFC<Props> = ({ todos, status }) => {
 
   const handleOnSubmit: SubmitHandler<Payload> = async (data) => {
     if (data.content === "") return;
-    await axios.post("http://localhost:3000/v1/todos", {
+    await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/v1/todos`, {
       content: data.content,
       status: status,
     });
-    mutate("http://localhost:3000/v1/todos");
+    mutate(`${process.env.NEXT_PUBLIC_API_URL}/v1/todos`);
   };
 
   const handleToggle = async (id: string) => {
-    await axios.put(`http://localhost:3000/v1/todos/${id}/toggle`);
-    mutate("http://localhost:3000/v1/todos");
+    await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/v1/todos/${id}/toggle`);
+    mutate(`${process.env.NEXT_PUBLIC_API_URL}/v1/todos`);
   };
 
   const handleDelete = async (id: string) => {
-    await axios.delete(`http://localhost:3000/v1/todos/${id}`);
-    mutate("http://localhost:3000/v1/todos");
+    await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/v1/todos/${id}`);
+    mutate(`${process.env.NEXT_PUBLIC_API_URL}/v1/todos`);
   };
 
   const handleDuplicate = async (id: string) => {
-    await axios.post(`http://localhost:3000/v1/todos/${id}/duplicate`);
-    mutate("http://localhost:3000/v1/todos");
+    await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/v1/todos/${id}/duplicate`
+    );
+    mutate(`${process.env.NEXT_PUBLIC_API_URL}/v1/todos`);
   };
 
   return (

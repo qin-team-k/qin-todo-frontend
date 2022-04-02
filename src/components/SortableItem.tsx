@@ -33,7 +33,7 @@ export const SortableItem: FC<Props> = ({ todo }) => {
 
   const handleToggle = async (id: string) => {
     const idToken = await authUser.getIdToken();
-    await fetch(`http://localhost:3000/api/v1/todos/${id}/toggle`, {
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/todos/${id}/toggle`, {
       method: "PUT",
       headers: {
         authorization: `Bearer ${idToken}`,
@@ -44,12 +44,12 @@ export const SortableItem: FC<Props> = ({ todo }) => {
         id,
       }),
     });
-    mutate("http://localhost:3000/api/v1/todos");
+    mutate(`${process.env.NEXT_PUBLIC_API_URL}/v1/todos`);
   };
 
   const handleDelete = async (id: string) => {
     const idToken = await authUser.getIdToken();
-    await fetch(`http://localhost:3000/api/v1/todos/${id}`, {
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/todos/${id}`, {
       method: "DELETE",
       headers: {
         authorization: `Bearer ${idToken}`,
@@ -57,12 +57,12 @@ export const SortableItem: FC<Props> = ({ todo }) => {
       },
     });
 
-    mutate("http://localhost:3000/api/v1/todos");
+    mutate(`${process.env.NEXT_PUBLIC_API_URL}/v1/todos`);
   };
 
   const handleDuplicate = async (id: string) => {
     const idToken = await authUser.getIdToken();
-    await fetch(`http://localhost:3000/api/v1/todos/${id}/duplicate`, {
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/todos/${id}/duplicate`, {
       method: "POST",
       headers: {
         authorization: `Bearer ${idToken}`,
@@ -73,12 +73,12 @@ export const SortableItem: FC<Props> = ({ todo }) => {
         id,
       }),
     });
-    mutate("http://localhost:3000/api/v1/todos");
+    mutate(`${process.env.NEXT_PUBLIC_API_URL}/v1/todos`);
   };
 
   const handleOnSubmit = async () => {
     const idToken = await authUser.getIdToken();
-    await fetch(`http://localhost:3000/api/v1/todos/${todo.id}`, {
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/todos/${todo.id}`, {
       method: "PUT",
       headers: {
         authorization: `Bearer ${idToken}`,
@@ -89,7 +89,7 @@ export const SortableItem: FC<Props> = ({ todo }) => {
         content,
       }),
     });
-    mutate("http://localhost:3000/api/v1/todos");
+    mutate(`${process.env.NEXT_PUBLIC_API_URL}/v1/todos`);
     setIsAdding(false);
   };
 

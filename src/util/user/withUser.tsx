@@ -11,6 +11,7 @@ export const useFetcher = () => {
   return useCallback(
     async (key: string) => {
       const idToken = await authUser.getIdToken();
+      console.log(idToken);
 
       const res = await fetch(key, {
         headers: { authorization: `Bearer ${idToken}` },

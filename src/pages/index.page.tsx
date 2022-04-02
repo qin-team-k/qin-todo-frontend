@@ -59,7 +59,9 @@ const Home = () => {
     }
   };
 
-  const { data, error } = useSWR<Items>(`http://localhost:3000/api/v1/todos`);
+  const { data, error } = useSWR<Items>(
+    `${process.env.NEXT_PUBLIC_API_URL}/v1/todos`
+  );
 
   const [items, setItems] = useState<Items>();
   const [input, setInput] = useState<string>();
@@ -110,7 +112,7 @@ const Home = () => {
     if (e.target.value === "") return;
     if (e.key === "Enter") {
       const idToken = await authUser.getIdToken();
-      await fetch("http://localhost:3000/api/v1/todos", {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/todos`, {
         method: "POST",
         headers: {
           authorization: `Bearer ${idToken}`,
@@ -122,7 +124,7 @@ const Home = () => {
         }),
       });
 
-      mutate("http://localhost:3000/api/v1/todos");
+      mutate(`${process.env.NEXT_PUBLIC_API_URL}/v1/todos`);
       e.target.value = "";
     }
   };
@@ -225,19 +227,22 @@ const Home = () => {
             const isDone = activeTodo?.done;
             // FIXME indexを変える
             const idToken = await authUser.getIdToken();
-            await fetch(`http://localhost:3000/api/v1/todos/${todoId}/order`, {
-              method: "PUT",
-              headers: {
-                authorization: `Bearer ${idToken}`,
-                "content-type": "application/json",
-              },
-              body: JSON.stringify({
-                status,
-                index: distId,
-              }),
-            });
+            await fetch(
+              `${process.env.NEXT_PUBLIC_API_URL}/v1/todos/${todoId}/order`,
+              {
+                method: "PUT",
+                headers: {
+                  authorization: `Bearer ${idToken}`,
+                  "content-type": "application/json",
+                },
+                body: JSON.stringify({
+                  status,
+                  index: distId,
+                }),
+              }
+            );
 
-            mutate("http://localhost:3000/api/v1/todos");
+            mutate(`${process.env.NEXT_PUBLIC_API_URL}/v1/todos`);
 
             const activeContainer = findContainer(active.id);
             if (!activeContainer) {
